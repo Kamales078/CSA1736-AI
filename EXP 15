@@ -1,0 +1,53 @@
+import numpy as np
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+from sklearn import tree # Used for visualization
+
+def implement_decision_tree():
+    """
+    Implements a Decision Tree Classifier using the Iris dataset.
+    """
+    # 1. Load the Dataset
+    iris = load_iris()
+    X = iris.data    # Features (sepal length, sepal width, etc.)
+    y = iris.target  # Labels (species: setosa, versicolor, virginica)
+    
+    print("--- Decision Tree Classifier Implementation ---")
+    print(f"Total Samples: {len(X)}")
+    print(f"Features: {iris.feature_names}")
+    
+    # 2. Split Data into Training and Testing Sets
+    # We hold back 30% of the data for testing.
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.3, random_state=42
+    )
+    print(f"Training Samples: {len(X_train)} | Testing Samples: {len(X_test)}")
+    
+    # 3. Initialize and Train the Decision Tree Model
+    # We use the 'gini' impurity as the splitting criterion
+    classifier = DecisionTreeClassifier(criterion='gini', random_state=42)
+    
+    print("\nTraining Decision Tree...")
+    classifier.fit(X_train, y_train)
+    
+    # 4. Make Predictions on the Test Data
+    y_pred = classifier.predict(X_test)
+    
+    # 5. Evaluate the Model's Accuracy
+    accuracy = accuracy_score(y_test, y_pred)
+    print(f"Model Accuracy on Test Set: **{accuracy:.4f}**")
+    
+    # --- Example Prediction ---
+    # Predict the species for a new, unseen flower
+    # Features: [sepal length, seal width, petal length, petal width]
+    new_flower = np.array([[5.1, 3.5, 1.4, 0.2]]) # An example resembling setosa
+    
+    prediction_index = classifier.predict(new_flower)[0]
+    predicted_species = iris.target_names[prediction_index]
+    
+    print(f"\nExample Prediction for {new_flower[0]}: **{predicted_species}**")
+
+# Execute the Decision Tree implementation
+implement_decision_tree()
