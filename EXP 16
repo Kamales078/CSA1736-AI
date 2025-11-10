@@ -1,0 +1,66 @@
+import numpy as np
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
+from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import StandardScaler
+
+def implement_neural_network():
+    """
+    Implements a Feed-forward Neural Network (MLP) using the Iris dataset.
+    """
+    # 1. Load the Dataset
+    iris = load_iris()
+    X = iris.data
+    y = iris.target
+    
+    print("--- Feed-forward Neural Network (MLP) Implementation ---")
+    print(f"Total Samples: {len(X)}")
+    print(f"Features: {iris.feature_names}")
+    
+    # 2. Split Data into Training and Testing Sets
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.3, random_state=42
+    )
+    
+    # 3. Scale the Data
+    # Neural networks perform best when features are scaled.
+    scaler = StandardScaler()
+    X_train = scaler.fit_transform(X_train)
+    X_test = scaler.transform(X_test)
+    
+    # 4. Initialize and Train the Neural Network
+    # This creates a network with two hidden layers:
+    # Layer 1: 10 neurons
+    # Layer 2: 5 neurons
+    # max_iter is increased to ensure the model converges.
+    mlp = MLPClassifier(
+        hidden_layer_sizes=(10, 5), 
+        max_iter=1000, 
+        random_state=42
+    )
+    
+    print("\nTraining Neural Network (MLP)...")
+    mlp.fit(X_train, y_train)
+    
+    # 5. Make Predictions
+    y_pred = mlp.predict(X_test)
+    
+    # 6. Evaluate the Model
+    accuracy = accuracy_score(y_test, y_pred)
+    # Note: Accuracy may be lower/higher than the Decision Tree,
+    # as NNs have different strengths.
+    print(f"Model Accuracy on Test Set: **{accuracy:.4f}**")
+
+    # --- Example Prediction ---
+    # We must scale the new data just like the training data
+    new_flower = np.array([[5.1, 3.5, 1.4, 0.2]])
+    new_flower_scaled = scaler.transform(new_flower)
+    
+    prediction_index = mlp.predict(new_flower_scaled)[0]
+    predicted_species = iris.target_names[prediction_index]
+    
+    print(f"\nExample Prediction for {new_flower[0]}: **{predicted_species}**")
+
+# Execute the Neural Network implementation
+implement_neural_network()
